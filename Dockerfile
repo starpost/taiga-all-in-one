@@ -70,6 +70,9 @@ COPY scripts/* /scripts/
 
 WORKDIR /scripts
 
+# ===== Fix PG not starting
+RUN gpasswd -a postgres ssl-cert
+
 EXPOSE 80
 
 VOLUME /var/lib/postgresql
