@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y \
 	npm \
 	unzip \
 	gettext \
-	nginx
+	nginx \
+&& rm -rf /var/lib/apt/lists/*
 
 # ===== taiga backend
 RUN wget -O /taiga-back.zip \
@@ -60,7 +61,10 @@ COPY taiga-events/* /taiga-events/
 # ===== nginx config
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
+# ===== Cleanup
+RUN rm -rf /taiga-front-dist.zip /taiga-back.zip
 
+# ===== Helper Scripts
 RUN mkdir -p /scripts
 COPY scripts/* /scripts/
 
