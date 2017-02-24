@@ -1,0 +1,5 @@
+postgres: /scripts/pg.sh
+rabbitmq: rabbitmq-server
+taiga-back: gunicorn -w 3 -t 60 --pythonpath=/taiga-back -b 127.0.0.1:8001 taiga.wsgi
+taiga-events: /scripts/taiga-events.sh
+nginx: nginx

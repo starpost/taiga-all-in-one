@@ -1,0 +1,11 @@
+{
+    "api": "http://y1.starpost.cn:8888/api/v1/",
+    "eventsUrl": "ws://y1.starpost.cn:8888/events",
+    "debug": "true",
+    "publicRegisterEnabled": true,
+    "feedbackEnabled": true,
+    "privacyPolicyUrl": null,
+    "termsOfServiceUrl": null,
+    "maxUploadFileSize": null,
+    "contribPlugins": []
+}
