@@ -71,7 +71,7 @@ COPY scripts/* /scripts/
 WORKDIR /scripts
 
 # ===== Fix PG not starting
-RUN gpasswd -a postgres ssl-cert
+RUN sed -i 's/ssl\ =\ true/ssl\ =\ false/g' /etc/postgresql/9.4/main/postgresql.conf 
 
 EXPOSE 80
 
