@@ -7,6 +7,12 @@ Container Configuration
 -e HOST_NAME=example.com:8888
 -e DOMAIN_NAME=example.com
 -e SECURE=false
+-e PUBLIC_REGISTER_ENABLED=true
+-e EMAIL_HOST=smtp.gmail.com
+-e EMAIL_USE_TLS=true
+-e EMAIL_HOST_USER=user@gmail.com
+-e EMAIL_HOST_PASSWORD=userpass
+-e EMAIL_PORT=25
 ```
 
 Sample Run:
