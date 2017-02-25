@@ -1,24 +1,25 @@
-FROM python:3.5
+FROM alpine:edge
 
-RUN apt-get update && apt-get install -y \
-	python3 \
-	python3-pip \
-	python3-dev \
-	virtualenvwrapper \
-	libxml2-dev \
-	libxslt-dev \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+
+RUN apk update && apk add \
+        python3 \
+        python3-dev \
+        libxml2-dev \
+        libxslt-dev \
+        nodejs-current \
+        unzip \
+        gettext \
+        openssl \
+        postgresql \
+        postgresql-dev \
 	rabbitmq-server \
-	redis-server \
-	postgresql-9.4 \
-	postgresql-contrib-9.4 \
-	postgresql-doc-9.4 \
-	postgresql-server-dev-9.4 \
-	nodejs \
-	npm \
-	unzip \
-	gettext \
-	nginx \
-&& rm -rf /var/lib/apt/lists/*
+	gcc \
+	jpeg-dev zlib-dev musl-dev \
+	git \
+        nginx
+#       redis-server \
+
 
 # ===== taiga backend
 RUN wget -O /taiga-back.zip \
@@ -27,13 +28,12 @@ RUN unzip /taiga-back.zip -d /
 RUN mv /taiga-back-stable /taiga-back
 
 WORKDIR /taiga-back
-RUN virtualenv -p /usr/local/bin/python3.5 taiga
-RUN pip install -r requirements.txt
+RUN LIBRARY_PATH=/lib:/usr/lib /bin/sh -c "pip3 install -r requirements.txt"
 
 COPY taiga-back/* /taiga-back/settings/
 
-RUN python manage.py compilemessages
-RUN python manage.py collectstatic --noinput
+RUN python3 manage.py compilemessages
+RUN python3 manage.py collectstatic --noinput
 
 
 # ===== taiga frontend
@@ -50,9 +50,6 @@ COPY taiga-front/* /taiga-front-dist/dist/
 # ===== taiga events
 RUN git clone https://github.com/taigaio/taiga-events.git /taiga-events
 WORKDIR /taiga-events
-RUN npm cache clean -f
-RUN npm install -g n
-RUN n stable
 RUN npm install -g coffee-script
 RUN npm install
 
@@ -64,6 +61,9 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 # ===== Cleanup
 RUN rm -rf /taiga-front-dist.zip /taiga-back.zip
 
+RUN apk add \
+	openrc
+
 # ===== Helper Scripts
 RUN mkdir -p /scripts
 COPY scripts/* /scripts/
@@ -71,7 +71,7 @@ COPY scripts/* /scripts/
 WORKDIR /scripts
 
 # ===== Fix PG not starting
-RUN sed -i 's/ssl\ =\ true/ssl\ =\ false/g' /etc/postgresql/9.4/main/postgresql.conf 
+#RUN sed -i 's/ssl\ =\ true/ssl\ =\ false/g' /etc/postgresql/9.4/main/postgresql.conf 
 
 EXPOSE 80
 
