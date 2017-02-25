@@ -1,24 +1,16 @@
 #!/bin/sh
 
-if [ -d /var/lib/postgresql/9.4/main ]
+PGDATA=/var/lib/postgresql/9.6/data
+
+if [ -d "$PGDATA" ]
 then
         echo "Database Dir Exists"
 else
         echo "Database Initialization"
-        mkdir -p /var/lib/postgresql/9.4
-        chown -R postgres /var/lib/postgresql
-        su postgres -c "PGDATA=/var/lib/postgresql/9.4/main /usr/lib/postgresql/9.4/bin/pg_ctl init"
+	su postgres -c "pg_ctl init -D $PGDATA"
 fi
 
-service postgresql start
-
-while [ true ]
-do
-        /etc/init.d/postgresql status && break
-        sleep 1
-done
-
-su postgres -c "echo 'SELECT 1' | psql taiga > /dev/null"
+su postgres -c "echo SELECT 1 AS taiga FROM pg_roles WHERE rolname=\'taiga\' | postgres --single -D $PGDATA" | grep "taiga = \"1\"" > /dev/null
 
 if [ $? = 0 ]
 then
@@ -26,14 +18,17 @@ then
 else
         echo "Setup Initial Database"
 
-	su postgres -c "psql -c \"CREATE USER taiga WITH PASSWORD 'taiga';\""
-	su postgres -c "createdb taiga -O taiga"
-	cd /taiga-back
-	python manage.py migrate --noinput
-	python manage.py loaddata initial_user
-	python manage.py loaddata initial_project_templates
-	python manage.py loaddata initial_role
+	su postgres -c "echo CREATE USER taiga WITH PASSWORD \'taiga\' | postgres --single -D $PGDATA"
+	su postgres -c "echo CREATE DATABASE taiga OWNER \'taiga\' ENCODING \'UTF-8\' | postgres --single -D $PGDATA"
 
+	su postgres -c "pg_ctl start -D $PGDATA"
+
+	cd /taiga-back
+	python3 manage.py migrate --noinput
+	python3 manage.py loaddata initial_user
+	python3 manage.py loaddata initial_project_templates
+	python3 manage.py loaddata initial_role
+
+	su postgres -c "pg_ctl stop -D $PGDATA"
 fi
 
-service postgresql stop

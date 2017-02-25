@@ -1,8 +1,16 @@
 #!/bin/sh
 
-chown -R rabbitmq /var/lib/rabbitmq
+RABBITMQ_BASE=/var/lib/rabbitmq
+RABBITMQ_NODENAME=taiga
+RABBITMQ_PID_FILE=/tmp/rabbitmq.pid
 
-service rabbitmq-server start
+export RABBITMQ_BASE
+export RABBITMQ_NODENAME
+export RABBITMQ_PID_FILE
+
+chown -R rabbitmq $RABBITMQ_BASE
+
+rabbitmq-server &
 
 rabbitmqctl list_users | grep taiga
 if [ $? != 0 ]
@@ -12,5 +20,5 @@ then
 	rabbitmqctl set_permissions -p taiga taiga ".*" ".*" ".*"
 fi
 
-service rabbitmq-server stop
+rabbitmqctl stop
 
