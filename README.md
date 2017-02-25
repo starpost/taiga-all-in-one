@@ -11,10 +11,10 @@ Container Configuration
 
 Sample Run:
 ```
-docker run -it --rm -p80:80 \
+docker run -it --rm -p 80:80 \
 	-v /opt/taiga/postgresql:/var/lib/postgresql \
 	-v /opt/taiga/rabbitmq:/var/lib/rabbitmq \
 	-e HOST_NAME=example.com \
 	-e DOMAIN_NAME=example.com \
-	-e SECURE=false <image_name>
+	-e SECURE=false starpost/taiga-all-in-one
 ```

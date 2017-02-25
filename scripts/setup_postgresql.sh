@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PGDATA=/var/lib/postgresql/9.6/data
+PGDATA=/var/lib/postgresql/data
 
 if [ -d "$PGDATA" ]
 then

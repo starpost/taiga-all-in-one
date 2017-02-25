@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PGDATA=/var/lib/postgresql/9.6/data
+PGDATA=/var/lib/postgresql/data
 
 su postgres -c "pg_ctl start -D $PGDATA"
 

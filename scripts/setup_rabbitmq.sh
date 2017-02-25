@@ -1,7 +1,7 @@
 #!/bin/sh
 
 RABBITMQ_BASE=/var/lib/rabbitmq
-RABBITMQ_NODENAME=taiga
+RABBITMQ_NODENAME=localhost
 RABBITMQ_PID_FILE=/tmp/rabbitmq.pid
 
 export RABBITMQ_BASE
@@ -11,6 +11,18 @@ export RABBITMQ_PID_FILE
 chown -R rabbitmq $RABBITMQ_BASE
 
 rabbitmq-server &
+
+while [ true ]
+do
+	rabbitmqctl status 2>&1 | grep pid > /dev/null
+	if [ "$?" -eq 0 ]
+	then
+		break
+	else
+		echo "Waiting rabbitmq server to start..."
+		sleep 2
+	fi
+done
 
 rabbitmqctl list_users | grep taiga
 if [ $? != 0 ]
