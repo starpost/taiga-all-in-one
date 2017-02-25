@@ -17,6 +17,7 @@ RUN apk update && apk add \
 	gcc \
 	jpeg-dev zlib-dev musl-dev \
 	git \
+	bash \
         nginx
 #       redis-server \
 
@@ -61,8 +62,6 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 # ===== Cleanup
 RUN rm -rf /taiga-front-dist.zip /taiga-back.zip
 
-RUN apk add \
-	bash
 
 # ===== Helper Scripts
 RUN mkdir -p /scripts
@@ -73,6 +72,7 @@ WORKDIR /scripts
 # ===== Fix misc
 RUN mkdir -p /run/nginx
 RUN chown rabbitmq /usr/lib/rabbitmq
+
 
 EXPOSE 80
 
