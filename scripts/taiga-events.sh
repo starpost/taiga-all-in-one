@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cd /taiga-events; /usr/local/bin/coffee index.coffee
+cd /taiga-events; coffee index.coffee

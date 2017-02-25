@@ -17,6 +17,7 @@ RUN apk update && apk add \
 	gcc \
 	jpeg-dev zlib-dev musl-dev \
 	git \
+	bash \
         nginx
 #       redis-server \
 
@@ -61,8 +62,6 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 # ===== Cleanup
 RUN rm -rf /taiga-front-dist.zip /taiga-back.zip
 
-RUN apk add \
-	openrc
 
 # ===== Helper Scripts
 RUN mkdir -p /scripts
@@ -70,8 +69,10 @@ COPY scripts/* /scripts/
 
 WORKDIR /scripts
 
-# ===== Fix PG not starting
-#RUN sed -i 's/ssl\ =\ true/ssl\ =\ false/g' /etc/postgresql/9.4/main/postgresql.conf 
+# ===== Fix misc
+RUN mkdir -p /run/nginx
+RUN chown rabbitmq /usr/lib/rabbitmq
+
 
 EXPOSE 80
 
