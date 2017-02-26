@@ -78,6 +78,7 @@ EXPOSE 80
 
 VOLUME /var/lib/postgresql
 VOLUME /var/lib/rabbitmq
+VOLUME /taiga-back/media
 
 ENTRYPOINT [ "/scripts/entrypoint.sh" ]
 CMD [ "./forego", "start" ]
