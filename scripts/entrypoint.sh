@@ -100,6 +100,8 @@ substitute() {
   sed -i "s/__EMAIL_HOST_PASSWORD__/$__EMAIL_HOST_PASSWORD__/g" $2
   sed -i "s/__EMAIL_PORT__/$__EMAIL_PORT__/g" $2
   sed -i "s/__FRONTEND_PUBLIC_REGISTER_ENABLED__/$__FRONTEND_PUBLIC_REGISTER_ENABLED__/g" $2
+  sed -i "s/__DEFAULT_FROM_EMAIL__/$__DEFAULT_FROM_EMAIL__/g" $2
+  sed -i "s/__SERVER_EMAIL__/$__SERVER_EMAIL__/g" $2
 }
 
 substitute /taiga-back/settings/local.py.tmpl /taiga-back/settings/local.py
