@@ -20,6 +20,7 @@ Sample Run:
 docker run -it --rm -p 80:80 \
 	-v /opt/taiga/postgresql:/var/lib/postgresql \
 	-v /opt/taiga/rabbitmq:/var/lib/rabbitmq \
+	-v /opt/taiga/media:/taiga-back/media \
 	-e HOST_NAME=example.com \
 	-e DOMAIN_NAME=example.com \
 	-e SECURE=false starpost/taiga-all-in-one
