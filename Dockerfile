@@ -83,3 +83,25 @@ VOLUME /taiga-back/media
 ENTRYPOINT [ "/scripts/entrypoint.sh" ]
 CMD [ "./forego", "start" ]
 
+
+# ===== GitLab Integration
+RUN git clone https://github.com/starpost/taiga-contrib-gitlab-auth.git /taiga-gitlab
+WORKDIR /taiga-gitlab
+RUN git checkout gitlab
+
+# --- front
+WORKDIR /taiga-gitlab/front
+RUN npm install gulp-cli -g
+RUN npm install gulp -D
+RUN npm install
+RUN gulp build
+
+RUN mkdir -p /taiga-front-dist/dist/plugins/gitlab-auth/
+RUN cp -a dist/* /taiga-front-dist/dist/plugins/gitlab-auth/
+
+# --- back
+WORKDIR /taiga-gitlab/back
+RUN pip3 install -e .
+
+# --- back to scripts
+WORKDIR /scripts
