@@ -16,6 +16,10 @@
 ## EMAIL_HOST_PASSWORD
 ## EMAIL_PORT              25
 ##
+## GITLAB_URL
+## GITLAB_CLIENT_ID
+## GITLAB_CLIENT_SECRET
+##
 ## __URL__ (http://hostname:port or https://hostname:port)
 ## __WS_URL__ (ws://hostname:port or wss://hostname:port)
 ## __SCHEME__ (http / https)
@@ -45,6 +49,8 @@ case "$SECURE" in
     WS_SCHEME=ws
     ;;
 esac
+
+__URL__="$SCHEME://$HOST_NAME"
 
 case "$PUBLIC_REGISTER_ENABLED" in
  "false")
@@ -85,6 +91,24 @@ else
   __SERVER_EMAIL__="SERVER_EMAIL = DEFAULT_FROM_EMAIL"
 fi
 
+if [ "$GITLAB_URL" = "" ]
+then
+  __FRONT_CONFIGS__=""
+  __FRONT_PLUGINS__=""
+  __BACK_CONFIG1__=""
+  __BACK_CONFIG2__=""
+  __BACK_CONFIG3__=""
+  __BACK_CONFIG4__=""
+  __BACK_CONFIG5__=""
+else
+  __FRONT_CONFIGS__="\"gitLabClientId\": \"$GITLAB_CLIENT_ID\", \"gitLabUrl\": \"$GITLAB_URL\","
+  __FRONT_PLUGINS__="\"/plugins/gitlab-auth/gitlab-auth.json\""
+  __BACK_CONFIG1__="INSTALLED_APPS += [\"taiga_contrib_gitlab_auth\"]"
+  __BACK_CONFIG2__="GITLAB_API_CLIENT_ID = \"$GITLAB_CLIENT_ID\""
+  __BACK_CONFIG3__="GITLAB_API_CLIENT_SECRET = \"$GITLAB_CLIENT_SECRET\""
+  __BACK_CONFIG4__="GITLAB_URL=\"$GITLAB_URL\""
+  __BACK_CONFIG5__="REDIRECT_URI=\"$__URL__/login\""
+fi
 substitute() {
   sed "s/__URL__/$SCHEME:\/\/$HOST_NAME/g" $1 > $2 
   sed -i "s/__WS_URL__/$WS_SCHEME:\/\/$HOST_NAME/g" $2
@@ -102,6 +126,15 @@ substitute() {
   sed -i "s/__FRONTEND_PUBLIC_REGISTER_ENABLED__/$__FRONTEND_PUBLIC_REGISTER_ENABLED__/g" $2
   sed -i "s/__DEFAULT_FROM_EMAIL__/$__DEFAULT_FROM_EMAIL__/g" $2
   sed -i "s/__SERVER_EMAIL__/$__SERVER_EMAIL__/g" $2
+
+  sed -i "s/__FRONT_CONFIGS__/`echo -n ${__FRONT_CONFIGS__//\//\\\/}`/g" $2
+  sed -i "s/__FRONT_PLUGINS__/`echo -n ${__FRONT_PLUGINS__//\//\\\/}`/g" $2
+  sed -i "s/__BACK_CONFIG1__/`echo -n ${__BACK_CONFIG1__//\//\\\/}`/g" $2
+  sed -i "s/__BACK_CONFIG2__/`echo -n ${__BACK_CONFIG2__//\//\\\/}`/g" $2
+  sed -i "s/__BACK_CONFIG3__/`echo -n ${__BACK_CONFIG3__//\//\\\/}`/g" $2
+  sed -i "s/__BACK_CONFIG4__/`echo -n ${__BACK_CONFIG4__//\//\\\/}`/g" $2
+  sed -i "s/__BACK_CONFIG5__/`echo -n ${__BACK_CONFIG5__//\//\\\/}`/g" $2
+
 }
 
 substitute /taiga-back/settings/local.py.tmpl /taiga-back/settings/local.py

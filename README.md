@@ -13,6 +13,9 @@ Container Configuration
 -e EMAIL_HOST_USER=user@gmail.com
 -e EMAIL_HOST_PASSWORD=userpass
 -e EMAIL_PORT=25
+-e GITLAB_URL=https://somegitlabinstallation.com
+-e GITLAB_CLIENT_ID=xxxxx
+-e GITLAB_CLIENT_SECRET=xxxxx
 ```
 
 Sample Run:
